@@ -7,6 +7,8 @@ import com.orehorez.poe_agent.Classes.SampleDate;
 import com.orehorez.poe_agent.dto.CurrencyDateDTO;
 import com.orehorez.poe_agent.repository.CurrencyDateRepository;
 import com.orehorez.poe_agent.repository.SampleDateRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.json.JSONArray;
@@ -18,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
+@Getter
+@Setter
 @Service
 public class CurrencyDateService {
 
@@ -56,9 +59,12 @@ public class CurrencyDateService {
             if (currencyDetail.has("icon")) {
                 currency.setIcon(currencyDetail.getString("icon"));
             }
-
-            currencyService.addNewCurrency(currency);
-
+            try {
+                currencyService.addNewCurrency(currency);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
         }
 
     }
@@ -77,11 +83,16 @@ public class CurrencyDateService {
 
                 sampleDate.setLeagueId(pay.getInt("league_id"));
                 sampleDate.setDate(LocalDateTime.parse(pay.getString("sample_time_utc"), formatter));
-                break;
+                try {
+                    sampleDateService.addNewSampleDate(sampleDate);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
+
+
             }
         }
-
-        sampleDateService.addNewSampleDate(sampleDate);
 
 
     }
@@ -139,7 +150,7 @@ public class CurrencyDateService {
     }
 
 
-    public List<CurrencyDateDTO> getCurrencyDateWithJoins(){
+    public List<CurrencyDateDTO> getCurrencyDateWithJoins() {
         List<CurrencyDate> currencyDates = currencyDateRepository.findAll();
         List<CurrencyDateDTO> dto = new ArrayList<>();
 

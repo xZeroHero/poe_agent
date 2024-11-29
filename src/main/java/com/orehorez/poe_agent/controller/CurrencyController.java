@@ -20,7 +20,7 @@ public class CurrencyController {
         this.currencyDateService = currencyDateService;
     }
 
-    @GetMapping
+    @GetMapping("db_refresh")
     public void initDB() throws Exception {
         currencyDateService.fetchJsonFromApi();
         currencyDateService.saveCurrencyToDb();
@@ -32,5 +32,9 @@ public class CurrencyController {
     @GetMapping("/currencyPrice")
     public List<CurrencyDateDTO> getCurrencyPrice() { return currencyDateService.getCurrencyDateWithJoins(); }
 
+/*    @GetMapping("/")
+    public String homePage(){
+        return "index";
+    }*/
 
 }
