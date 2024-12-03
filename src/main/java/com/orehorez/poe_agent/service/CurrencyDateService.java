@@ -38,6 +38,13 @@ public class CurrencyDateService {
         this.currencyDateRepository = currencyDateRepository;
     }
 
+/*    public Double findLatestPayChaosByCurrency(Currency currency) {
+        return currencyDateRepository.findLatestPayChaosByCurrency(currency);
+    }*/
+
+
+
+
     public String fetchJsonFromApi() throws Exception {
 
         String apiUrl = "https://poe.ninja/api/data/currencyoverview?league=Settlers&type=Currency";
@@ -161,11 +168,13 @@ public class CurrencyDateService {
             currencyDateDTO.setSampleDate(currencyDate.getSampleDate().getDate());
             currencyDateDTO.setPayChaos(currencyDate.getPayChaos());
             currencyDateDTO.setReceiveChaos(currencyDate.getReceiveChaos());
+            currencyDateDTO.setIconURL(currencyDate.getCurrency().getIcon());
             dto.add(currencyDateDTO);
         }
         return dto;
 
-
     }
+
+
 
 }

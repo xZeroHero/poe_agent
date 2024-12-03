@@ -1,32 +1,32 @@
 package com.orehorez.poe_agent.dto;
 
-
 import com.orehorez.poe_agent.Classes.CurrencyDateID;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
 @Getter
 @Setter
+@NoArgsConstructor
 
-public class CurrencyDateDTO {
-    private CurrencyDateID id;
+public class CurrencyDTO {
+
+    private Long id;
     private String currencyName;
-    private LocalDateTime sampleDate;
-    private double payChaos;
-    private double receiveChaos;
+    private double latestPayChaos;
+    private double latestReceiveChaos;
     private String iconURL;
+
 
     @Override
     public String toString() {
-        return "CurrencyDateDTO{" +
+        return "CurrencyDTO{" +
                 "id=" + id +
                 ", currencyName='" + currencyName + '\'' +
-                ", sampleDate=" + sampleDate +
-                ", payChaos=" + payChaos +
-                ", receiveChaos=" + receiveChaos +
-                "iconURL='" + iconURL + '\'' +
+                ", latestPayChaos=" + latestPayChaos +
+                ", latestReceiveChaos=" + latestReceiveChaos +
+                ", iconURL='" + iconURL + '\'' +
                 '}';
     }
 }

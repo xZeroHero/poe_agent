@@ -1,6 +1,8 @@
 package com.orehorez.poe_agent.Classes;
 
 
+import com.orehorez.poe_agent.controller.CurrencyController;
+import com.orehorez.poe_agent.service.CurrencyService;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +34,9 @@ public class Currency {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<CurrencyDate> currencyDate = new ArrayList<>();
+
+
+
 
     public void addSampleDate(SampleDate sampleDate) {
         CurrencyDate currencyDate = new CurrencyDate(this, sampleDate);

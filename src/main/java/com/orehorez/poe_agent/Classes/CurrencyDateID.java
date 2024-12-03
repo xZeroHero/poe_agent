@@ -26,7 +26,7 @@ public class CurrencyDateID
     @Column(name = "sample_date_date_id")
     private Long dateId;
 
-
+    
 
 
     @Override
