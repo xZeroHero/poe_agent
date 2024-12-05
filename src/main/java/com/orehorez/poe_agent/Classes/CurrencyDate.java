@@ -19,11 +19,11 @@ public class CurrencyDate {
     @EmbeddedId
     private CurrencyDateID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @MapsId("currencyId")
     private Currency currency;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @MapsId("dateId")
     private SampleDate sampleDate;
 

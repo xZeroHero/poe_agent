@@ -6,7 +6,7 @@ import com.orehorez.poe_agent.Classes.CurrencyDateID;
 import com.orehorez.poe_agent.Classes.SampleDate;
 import com.orehorez.poe_agent.dto.CurrencyDateDTO;
 import com.orehorez.poe_agent.repository.CurrencyDateRepository;
-import com.orehorez.poe_agent.repository.SampleDateRepository;
+import com.orehorez.poe_agent.repository.CurrencyRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,7 @@ import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @Setter
@@ -30,12 +28,15 @@ public class CurrencyDateService {
     private final CurrencyService currencyService;
     private final CurrencyDateRepository currencyDateRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
+    private final CurrencyRepository currencyRepository;
+    String jsonString = JsonFetcher.getJsonFromUrl();
 
     @Autowired
-    public CurrencyDateService(SampleDateService sampleDateService, CurrencyService currencyService, CurrencyDateRepository currencyDateRepository) {
+    public CurrencyDateService(SampleDateService sampleDateService, CurrencyService currencyService, CurrencyDateRepository currencyDateRepository, CurrencyRepository currencyRepository) throws Exception {
         this.sampleDateService = sampleDateService;
         this.currencyService = currencyService;
         this.currencyDateRepository = currencyDateRepository;
+        this.currencyRepository = currencyRepository;
     }
 
 /*    public Double findLatestPayChaosByCurrency(Currency currency) {
@@ -45,40 +46,10 @@ public class CurrencyDateService {
 
 
 
-    public String fetchJsonFromApi() throws Exception {
 
-        String apiUrl = "https://poe.ninja/api/data/currencyoverview?league=Settlers&type=Currency";
-        String json = JsonFetcher.getJsonFromUrl(apiUrl);
-        /*        System.out.println("API response(RAW): " + json);*/
-        return json;
-    }
-
-    public void saveCurrencyToDb() throws Exception {
-        String jsonString = fetchJsonFromApi();
-        JSONObject json = new JSONObject(jsonString);
-        JSONArray currencyDetails = json.getJSONArray("currencyDetails");
-
-        for (int i = 0; i < currencyDetails.length(); i++) {
-            JSONObject currencyDetail = currencyDetails.getJSONObject(i);
-            Currency currency = new Currency();
-            currency.setCurrencyId(currencyDetail.getLong("id"));
-            currency.setName(currencyDetail.getString("name"));
-            if (currencyDetail.has("icon")) {
-                currency.setIcon(currencyDetail.getString("icon"));
-            }
-            try {
-                currencyService.addNewCurrency(currency);
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
-            }
-        }
-
-    }
 
     public void saveSampleDateToDb() throws Exception {
 
-        String jsonString = fetchJsonFromApi();
         JSONObject json = new JSONObject(jsonString);
         JSONArray lines = json.getJSONArray("lines");
         SampleDate sampleDate = new SampleDate();
@@ -106,7 +77,6 @@ public class CurrencyDateService {
 
     public void saveJsonToDb() throws Exception {
 
-        String jsonString = fetchJsonFromApi();
         JSONObject json = new JSONObject(jsonString);
         JSONArray lines = json.getJSONArray("lines");
 
@@ -135,7 +105,7 @@ public class CurrencyDateService {
                 JSONObject receive = line.getJSONObject("receive");
                 currencyDate.setPayChaos(receive.getDouble("value"));
                 currencyDate.setId(new CurrencyDateID(currency.getCurrencyId(), sampleDate.getDateId()));
-                this.addNewCurrencyDate(currencyDate);
+                addNewCurrencyDate(currencyDate);
 
 
             }
@@ -145,7 +115,7 @@ public class CurrencyDateService {
 
     }
 
-    public CurrencyDate addNewCurrencyDate(CurrencyDate currencyDate) {
+    public void addNewCurrencyDate(CurrencyDate currencyDate) {
         Optional<CurrencyDate> currencyDateOptional = currencyDateRepository
                 .findCurrencyDateByCurrencyAndSampleDate(currencyDate.getCurrency(), currencyDate.getSampleDate());
 
@@ -153,7 +123,7 @@ public class CurrencyDateService {
             throw new IllegalStateException("Sample Date already present");
         }
 
-        return currencyDateRepository.save(currencyDate);
+        currencyDateRepository.save(currencyDate);
     }
 
 
@@ -174,7 +144,6 @@ public class CurrencyDateService {
         return dto;
 
     }
-
 
 
 }

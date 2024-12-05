@@ -4,11 +4,15 @@ import com.orehorez.poe_agent.Classes.CurrencyDateID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 
 public class CurrencyDTO {
 
@@ -17,16 +21,53 @@ public class CurrencyDTO {
     private double latestPayChaos;
     private double latestReceiveChaos;
     private String iconURL;
+    private Double[] paySparkLine;
+    private Double payTotalChange;
+    private Double[] receiveSparkLine;
+    private Double receiveTotalChange;
+    private String tradeId;
+
+    private String payPolylineString;
+    private String receivePolylineString;
 
 
-    @Override
-    public String toString() {
-        return "CurrencyDTO{" +
-                "id=" + id +
-                ", currencyName='" + currencyName + '\'' +
-                ", latestPayChaos=" + latestPayChaos +
-                ", latestReceiveChaos=" + latestReceiveChaos +
-                ", iconURL='" + iconURL + '\'' +
-                '}';
+    public Double[] normalizeSparkline(Double[] sparkLine) {
+        if (sparkLine != null) {
+            for (int i = 0; i < sparkLine.length; i++) {
+                if (sparkLine[i] == null) {
+                    sparkLine[i] = 0.001;
+                } else {
+                    sparkLine[i] = sparkLine[i] + 100;
+                }
+            }
+
+        }
+        return sparkLine;
     }
+
+    public void setPaySparkLine(Double[] paySparkLine) {
+        this.paySparkLine = normalizeSparkline(paySparkLine);
+        setPayPolylineString(getPolylineString(this.paySparkLine));
+    }
+
+    public void setReceiveSparkLine(Double[] receiveSparkLine) {
+        this.receiveSparkLine = normalizeSparkline(receiveSparkLine);
+        setReceivePolylineString(getPolylineString(this.receiveSparkLine));
+
+    }
+
+
+    public String getPolylineString(Double[] sparkLine) {
+        final Integer[] sparkLinePoints = {28, 56, 84, 112, 140, 168, 196};
+        StringBuilder output = new StringBuilder();
+        if (sparkLine != null){
+        for (int i = 0; i < sparkLine.length; i++) {
+            output.append(sparkLinePoints[i])
+                    .append(", ")
+                    .append(sparkLine[i])
+                    .append("\n");
+        }}
+        return output.toString();
+    }
+
 }

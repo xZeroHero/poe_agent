@@ -32,9 +32,9 @@ public class CurrencyRestController {
 
     @GetMapping("db_refresh")
     public void initDB() throws Exception {
-        currencyDateService.fetchJsonFromApi();
-        currencyDateService.saveCurrencyToDb();
+
         currencyDateService.saveSampleDateToDb();
+        currencyService.saveCurrencyToDb();
         currencyDateService.saveJsonToDb();
     }
 

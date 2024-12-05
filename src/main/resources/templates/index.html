@@ -52,7 +52,7 @@
             <td class="w-20 grid grid-cols-3 gap-4 ">
                 <div class="flex content-center h-max w-20">
                     <!--<img src="images/svg_graph_placeholder.png" alt="" class="object-scale-down"/>-->
-                    <div class="w-20 h-max border border-l-lime-600 border-b-lime-600 border-t-0 border-r-0">
+                    <div class="w-20 h-max">
 
 
                         <svg viewBox="0 0 200 200" class="chart">
@@ -60,20 +60,9 @@
                             <polyline
                                 fill="none"
                                 stroke="#0074d9"
-                                stroke-width="2"
-                                points="
-                                   00,120
-                                   20,60
-                                   40,80
-                                   60,20
-                                   80,80
-                                   100,0
-                                   120,0
-                                   140,0
-                                   160,200
-                                   180,200
-                                   200, 200
-                                 "
+                                stroke-width="8"
+                                th:attr="points=*{payPolylineString}"
+
                             />
 
                         </svg>
