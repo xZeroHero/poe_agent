@@ -34,10 +34,7 @@ public class Currency {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<CurrencyDate> currencyDate = new ArrayList<>();
-    private String paySparkLine;
-    private Double payTotalChange;
-    private String receiveSparkLine;
-    private Double receiveTotalChange;
+
     private String tradeId;
 
 

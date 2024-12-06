@@ -37,7 +37,7 @@ public class CurrencyDTO {
                 if (sparkLine[i] == null) {
                     sparkLine[i] = 0.001;
                 } else {
-                    sparkLine[i] = sparkLine[i] + 100;
+                    sparkLine[i] = (sparkLine[i] * -1) + 100;
                 }
             }
 
@@ -69,5 +69,6 @@ public class CurrencyDTO {
         }}
         return output.toString();
     }
+
 
 }

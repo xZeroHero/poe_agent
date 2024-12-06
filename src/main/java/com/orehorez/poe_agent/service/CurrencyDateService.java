@@ -1,6 +1,7 @@
 package com.orehorez.poe_agent.service;
 
 import com.orehorez.poe_agent.Classes.Currency;
+
 import com.orehorez.poe_agent.Classes.CurrencyDate;
 import com.orehorez.poe_agent.Classes.CurrencyDateID;
 import com.orehorez.poe_agent.Classes.SampleDate;
@@ -75,6 +76,16 @@ public class CurrencyDateService {
 
     }
 
+    public String dataFromSparkline(JSONObject sparkLine) {
+        JSONArray data = sparkLine.getJSONArray("data");
+        String output = "";
+        output += data.toString();
+
+        return output;
+    }
+
+
+
     public void saveJsonToDb() throws Exception {
 
         JSONObject json = new JSONObject(jsonString);
@@ -98,6 +109,13 @@ public class CurrencyDateService {
                 //Get Currency Object based of the ID and saves it in the Bi-Directional relationship table
                 Currency currency = currencyService.findCurrencyByCurrencyId(pay.getLong("pay_currency_id"));
                 currencyDate.setCurrency(currency);
+                JSONObject paySparkLine = line.getJSONObject("paySparkLine");
+                JSONObject receiveSparkLine = line.getJSONObject("receiveSparkLine");
+
+                currencyDate.setPaySparkLine(dataFromSparkline(paySparkLine));
+                currencyDate.setReceiveSparkLine(dataFromSparkline(receiveSparkLine));
+                currencyDate.setPayTotalChange(paySparkLine.getDouble("totalChange"));
+                currencyDate.setReceiveTotalChange(receiveSparkLine.getDouble("totalChange"));
 
 
                 currencyDate.setReceiveChaos(pay.getDouble("value"));

@@ -63,13 +63,14 @@
                                 stroke-width="8"
                                 th:attr="points=*{payPolylineString}"
 
+
                             />
 
                         </svg>
 
 
                     </div>
-                    <div class="item-body">+50%</div>
+                    <div class="item-body" th:text="*{payTotalChange}"></div>
                 </div>
             </td>
             <td class="w-20">Trade</td>

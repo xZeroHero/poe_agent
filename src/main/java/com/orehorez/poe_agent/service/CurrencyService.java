@@ -1,7 +1,6 @@
 package com.orehorez.poe_agent.service;
 
 import com.orehorez.poe_agent.Classes.Currency;
-import com.orehorez.poe_agent.Classes.CurrencyDate;
 import com.orehorez.poe_agent.dto.CurrencyDTO;
 import com.orehorez.poe_agent.repository.CurrencyDateRepository;
 import com.orehorez.poe_agent.repository.CurrencyRepository;
@@ -10,95 +9,22 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CurrencyService {
 
     private final CurrencyRepository currencyRepository;
-    private final CurrencyDateRepository currencyDateRepository;
     String jsonString = JsonFetcher.getJsonFromUrl();
+    private final CurrencyDateRepository currencyDateRepository;
 
     @Autowired
     public CurrencyService(CurrencyRepository currencyRepository, CurrencyDateRepository currencyDateRepository) throws Exception {
         this.currencyRepository = currencyRepository;
         this.currencyDateRepository = currencyDateRepository;
     }
-
-
-    public String dataFromSparkline(JSONObject sparkLine) {
-        JSONArray data = sparkLine.getJSONArray("data");
-        String output = "";
-        output += data.toString();
-
-        return output;
-    }
-
-    public void saveCurrencyToDb() throws Exception {
-
-        JSONObject json = new JSONObject(jsonString);
-        JSONArray currencyDetails = json.getJSONArray("currencyDetails");
-        JSONArray lines = json.getJSONArray("lines");
-        Map<Long, Currency> currencyMap = new HashMap<>();
-
-
-        //Loop for the data in "lines"
-        for (int i = 0; i < lines.length(); i++) {
-            Currency currency = new Currency();
-            JSONObject line = lines.getJSONObject(i);
-            if (line.has("pay")) {
-                JSONObject pay = line.getJSONObject("pay");
-                currency.setCurrencyId(pay.getLong("pay_currency_id"));
-            }
-            JSONObject paySparkLine = line.getJSONObject("paySparkLine");
-            JSONObject receiveSparkLine = line.getJSONObject("receiveSparkLine");
-
-            currency.setPaySparkLine(dataFromSparkline(paySparkLine));
-            currency.setReceiveSparkLine(dataFromSparkline(receiveSparkLine));
-            currency.setPayTotalChange(paySparkLine.getDouble("totalChange"));
-            currency.setReceiveTotalChange(receiveSparkLine.getDouble("totalChange"));
-
-
-            //Saves the Currency Object with only the contents from "lines"
-            currencyMap.put(currency.getCurrencyId(), currency);
-
-            /*currencyRepository.save(currency);*/
-        }
-
-        //Loop for the data from "currencyDetails"
-        for (int i = 0; i < currencyDetails.length(); i++) {
-            JSONObject currencyDetail = currencyDetails.getJSONObject(i);
-            Currency currency = new Currency();
-            currency.setCurrencyId(currencyDetail.getLong("id"));
-            currency.setName(currencyDetail.getString("name"));
-            if (currencyDetail.has("tradeId")) {
-                currency.setTradeId(currencyDetail.getString("tradeId"));
-            }
-            if (currencyDetail.has("icon")) {
-                currency.setIcon(currencyDetail.getString("icon"));
-            }
-
-            // Loads and adds the missing data from "currencyDetails" to the data from "lines"
-            Currency currencyFromMap = currencyMap.get(currency.getCurrencyId());
-            if (currencyFromMap != null) {
-                currency.setPaySparkLine(currencyFromMap.getPaySparkLine());
-                currency.setPayTotalChange(currencyFromMap.getPayTotalChange());
-                currency.setReceiveSparkLine(currencyFromMap.getReceiveSparkLine());
-                currency.setReceiveTotalChange(currencyFromMap.getReceiveTotalChange());
-            }
-/*            try {
-                currencyService.addNewCurrency(currency);
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
-            }*/
-
-            currencyRepository.save(currency);
-
-        }
-
-    }
-
 
     public List<CurrencyDTO> getCurrencyDTO() {
         List<Currency> currencyList = currencyRepository.findAll();
@@ -111,10 +37,10 @@ public class CurrencyService {
             currencyDTO.setLatestPayChaos(findLatestPayChaos(currency));
             currencyDTO.setLatestReceiveChaos(1 / findLatestReceiveChaos(currency));
             currencyDTO.setIconURL(currency.getIcon());
-            currencyDTO.setPaySparkLine(getDoubleArrayFromString(currency.getPaySparkLine()));
-            currencyDTO.setReceiveSparkLine(getDoubleArrayFromString(currency.getReceiveSparkLine()));
-            currencyDTO.setPayTotalChange(currency.getPayTotalChange());
-            currencyDTO.setReceiveTotalChange(currency.getReceiveTotalChange());
+            currencyDTO.setPaySparkLine(getDoubleArrayFromString(findLatestPaySparkLine(currency)));
+            currencyDTO.setReceiveSparkLine(getDoubleArrayFromString(findLatestReceiveSparkLine(currency)));
+            currencyDTO.setPayTotalChange(findLatestPayTotalChange(currency));
+            currencyDTO.setReceiveTotalChange(findLatestReceiveTotalChange(currency));
             dto.add(currencyDTO);
         }
         return dto;
@@ -122,12 +48,24 @@ public class CurrencyService {
     }
 
     public Double[] getDoubleArrayFromString(String input) {
-        if (input != null) {
+        if (input != null && !input.equals("[]")) {
             JSONArray jsonArray = new JSONArray(input);
             Double[] doubleArray = new Double[jsonArray.length()];
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                doubleArray[i] = jsonArray.optDouble(i);
+                if (!jsonArray.isNull(i)) {
+                    doubleArray[i] = jsonArray.optDouble(i);
+                } else {
+                    if (i == 0) {
+                        doubleArray[i] = jsonArray.optDouble(i + 1);
+                    } else {
+                        if (i == jsonArray.length() - 1) {
+                            doubleArray[i] = jsonArray.optDouble(i - 1);
+                        } else {
+                            doubleArray[i] = (jsonArray.optDouble(i - 1) + jsonArray.optDouble(i + 1)) / 2;
+                        }
+                    }
+                }
             }
             return doubleArray;
         } else {
@@ -137,7 +75,9 @@ public class CurrencyService {
 
     }
 
+
     public double findLatestPayChaos(Currency currency) {
+
         Double d = currencyDateRepository.findLatestPayChaosByCurrency(currency.getCurrencyId());
         if (d == null) {
             return 0;
@@ -153,10 +93,26 @@ public class CurrencyService {
         return d;
     }
 
+    public String findLatestPaySparkLine(Currency currency) {
+        return currencyDateRepository.findLatestPaySparkLineByCurrency(currency.getCurrencyId());
+    }
+
+    public String findLatestReceiveSparkLine(Currency currency) {
+        return currencyDateRepository.findLatestReceiveSparkLineByCurrency(currency.getCurrencyId());
+    }
+
+    public Double findLatestPayTotalChange(Currency currency) {
+        return currencyDateRepository.findLatestPayTotalChangeByCurrency(currency.getCurrencyId());
+    }
+
+    public Double findLatestReceiveTotalChange(Currency currency) {
+        return currencyDateRepository.findLatestReceiveTotalChangeByCurrency(currency.getCurrencyId());
+    }
+
 
     public List<Currency> findAll() {
-        List<Currency> currencyList = currencyRepository.findAll();
-        return currencyList;
+        return currencyRepository.findAll();
+
     }
 
     public Currency findCurrencyByCurrencyId(Long id) {
@@ -174,4 +130,34 @@ public class CurrencyService {
         }
         return currencyRepository.save(currency);
     }
+
+
+    public void saveCurrencyToDb() throws Exception {
+
+        JSONObject json = new JSONObject(jsonString);
+        JSONArray currencyDetails = json.getJSONArray("currencyDetails");
+        JSONArray lines = json.getJSONArray("lines");
+
+
+        //Loop for the data from "currencyDetails"
+        for (int i = 0; i < currencyDetails.length(); i++) {
+            JSONObject currencyDetail = currencyDetails.getJSONObject(i);
+            Currency currency = new Currency();
+            currency.setCurrencyId(currencyDetail.getLong("id"));
+            currency.setName(currencyDetail.getString("name"));
+            if (currencyDetail.has("tradeId")) {
+                currency.setTradeId(currencyDetail.getString("tradeId"));
+            }
+            if (currencyDetail.has("icon")) {
+                currency.setIcon(currencyDetail.getString("icon"));
+            }
+
+
+            currencyRepository.save(currency);
+
+        }
+
+
+    }
 }
+

@@ -27,4 +27,17 @@ public interface CurrencyDateRepository extends JpaRepository<CurrencyDate, Inte
 
     @Query("SELECT cd.receiveChaos FROM CurrencyDate cd WHERE cd.currency.currencyId = :currencyId ORDER BY cd.sampleDate.dateId DESC LIMIT 1")
     Double findLatestReceiveChaosByCurrency(@Param("currencyId") Long currencyId);
+
+    @Query("SELECT cd.paySparkLine FROM CurrencyDate cd WHERE cd.currency.currencyId = :currencyId ORDER BY cd.sampleDate.dateId DESC LIMIT 1")
+    String findLatestPaySparkLineByCurrency(@Param("currencyId") Long currencyId);
+
+    @Query("SELECT cd.receiveSparkLine FROM CurrencyDate cd WHERE cd.currency.currencyId = :currencyId ORDER BY cd.sampleDate.dateId DESC LIMIT 1")
+    String findLatestReceiveSparkLineByCurrency(@Param("currencyId") Long currencyId);
+
+    @Query("SELECT cd.payTotalChange FROM CurrencyDate cd WHERE cd.currency.currencyId = :currencyId ORDER BY cd.sampleDate.dateId DESC LIMIT 1")
+    Double findLatestPayTotalChangeByCurrency(@Param("currencyId") Long currencyId);
+
+    @Query("SELECT cd.receiveTotalChange FROM CurrencyDate cd WHERE cd.currency.currencyId = :currencyId ORDER BY cd.sampleDate.dateId DESC LIMIT 1")
+    Double findLatestReceiveTotalChangeByCurrency(@Param("currencyId") Long currencyId);
+
 }

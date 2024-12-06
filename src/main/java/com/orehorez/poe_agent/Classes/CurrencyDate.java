@@ -33,6 +33,11 @@ public class CurrencyDate {
     @Column(name = "receive_Chaos")
     private double receiveChaos;
 
+    private String paySparkLine;
+    private Double payTotalChange;
+    private String receiveSparkLine;
+    private Double receiveTotalChange;
+
 
 
     public CurrencyDate(Currency currency, SampleDate sampleDate) {
@@ -40,7 +45,7 @@ public class CurrencyDate {
         this.sampleDate = sampleDate;
 //        this.id = new CurrencyDateID(currency.getCurrencyId(), sampleDate.getDateId());
     }
-    //Getters and setters omitted for brevity
+
 
     @Override
     public boolean equals(Object o) {
