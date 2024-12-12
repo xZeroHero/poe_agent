@@ -37,7 +37,7 @@ public class CurrencyDTO {
                 if (sparkLine[i] == null) {
                     sparkLine[i] = 0.001;
                 } else {
-                    sparkLine[i] = (sparkLine[i] * -1) + 100;
+                    sparkLine[i] = (sparkLine[i] * -1) + 70;
                 }
             }
 
@@ -58,7 +58,7 @@ public class CurrencyDTO {
 
 
     public String getPolylineString(Double[] sparkLine) {
-        final Integer[] sparkLinePoints = {28, 56, 84, 112, 140, 168, 196};
+        final Integer[] sparkLinePoints = {0, 33, 66, 99, 132, 165, 198};
         StringBuilder output = new StringBuilder();
         if (sparkLine != null){
         for (int i = 0; i < sparkLine.length; i++) {
