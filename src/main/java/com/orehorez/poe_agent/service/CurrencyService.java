@@ -31,17 +31,19 @@ public class CurrencyService {
         List<CurrencyDTO> dto = new ArrayList<>();
 
         for (Currency currency : currencyList) {
-            CurrencyDTO currencyDTO = new CurrencyDTO();
-            currencyDTO.setId(currency.getCurrencyId());
-            currencyDTO.setCurrencyName(currency.getName());
-            currencyDTO.setLatestPayChaos(findLatestPayChaos(currency));
-            currencyDTO.setLatestReceiveChaos(1 / findLatestReceiveChaos(currency));
-            currencyDTO.setIconURL(currency.getIcon());
-            currencyDTO.setPaySparkLine(getDoubleArrayFromString(findLatestPaySparkLine(currency)));
-            currencyDTO.setReceiveSparkLine(getDoubleArrayFromString(findLatestReceiveSparkLine(currency)));
-            currencyDTO.setPayTotalChange(findLatestPayTotalChange(currency));
-            currencyDTO.setReceiveTotalChange(findLatestReceiveTotalChange(currency));
-            dto.add(currencyDTO);
+            if (findLatestPayTotalChange(currency) != null) {
+                CurrencyDTO currencyDTO = new CurrencyDTO();
+                currencyDTO.setId(currency.getCurrencyId());
+                currencyDTO.setCurrencyName(currency.getName());
+                currencyDTO.setLatestPayChaos(findLatestPayChaos(currency));
+                currencyDTO.setLatestReceiveChaos(1 / findLatestReceiveChaos(currency));
+                currencyDTO.setIconURL(currency.getIcon());
+                currencyDTO.setPaySparkLine(getDoubleArrayFromString(findLatestPaySparkLine(currency)));
+                currencyDTO.setReceiveSparkLine(getDoubleArrayFromString(findLatestReceiveSparkLine(currency)));
+                currencyDTO.setPayTotalChange(findLatestPayTotalChange(currency));
+                currencyDTO.setReceiveTotalChange(findLatestReceiveTotalChange(currency));
+                dto.add(currencyDTO);
+            }
         }
         return dto;
 

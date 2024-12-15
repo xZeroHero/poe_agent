@@ -5,48 +5,66 @@
     <title>Title</title>
     <!--<link rel="stylesheet" href="/css/output.css">-->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src=
+                    "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
 
 </head>
-<body class="bg-slate-900 text-amber-400">
-<header class="bg-slate-800 container mx-auto py-8">
+<body class="relative bg-slate-900 text-amber-400 bg-no-repeat bg-cover bg-[50%] "
+      style="background-image: url('/images/background.jpg'); height: 913px">
+
+
+<div class="absolute bottom-0 left-0 right-0 top-0  w-full overflow-hidden bg-gradient-to-b from-slate-600  to-slate-900 opacity-90 h-full -z-10"></div>
+
+
+<!--<header class=" container mx-auto py-8">
     <h1 class="text-4xl font-bold px-4">Welcome to Spring Boot Tailwind</h1>
-    <div class="bg-slate-800"> TEST</div>
-</header>
+
+</header>-->
 
 <a href="/db_refresh" target="_blank">DB Refresh</a><br>
 <a href="/currencyPrice" target="_blank">CurrencyPrice</a><br>
 
 <div class="w-full flex justify-center">
-    <table class="w-5/6 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    <b class="w-5/6 mb-3">Suche:
+        <input id="entireSearch" type="text"
+               placeholder="Search here">
+    </b>
+</div>
 
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 h-10">
+<div class="w-full flex justify-center">
+
+
+    <table class="w-5/6 text-sm text-left rtl:text-right text-white bg-slate-900 opacity-70">
+
+        <thead class="text-xs uppercase bg-slate-950 opacity-90 h-10">
         <tr>
-            <th>Icon</th>
-            <th>Name</th>
-            <th>Buying price</th>
-            <th>Last 7 Days</th>
-            <th>Trade</th>
+            <th class="cursor-pointer " >Icon</th>
+            <th class="cursor-pointer">Name</th>
+            <th class="cursor-pointer">Buying price</th>
+            <th class="cursor-pointer">Last 7 Days</th>
+            <th class="cursor-pointer">Trade</th>
 
 
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="currencyDTO : ${currencyDTOList}" th:object="${currencyDTO}" class="h-10">
+        <tbody id="currency">
+        <tr th:each="currencyDTO : ${currencyDTOList}" th:object="${currencyDTO}" class="h-10 hover:bg-slate-950">
             <td>
                 <div class="flex content-center flex-shrink-0 h-1/2">
-                    <img th:src="*{iconURL}" alt="" class="scale-50">
+                    <img th:src="*{iconURL}" alt="" class="scale-90 pl-2">
                 </div>
             </td>
             <td th:text="*{currencyName}"></td>
             <td class="w-1/3">
                 <div class="flex w-full grid grid-cols-3 gap-4 content-stretch items-center">
-                    <div class="flex content-center flex-shrink-0 h-1/2">
+                    <div class="flex content-center flex-shrink-0 h-3/4">
                         <img src="https://web.poecdn.com/gen/image/WzI1LDE0LHsiZiI6IjJESXRlbXMvQ3VycmVuY3kvQ3VycmVuY3lSZXJvbGxSYXJlIiwidyI6MSwiaCI6MSwic2NhbGUiOjF9XQ/d119a0d734/CurrencyRerollRare.png"
                              alt="" class="">
-                        <div class="item-body" th:text="*{latestPayChaos}"></div>
+                        <div class="item-body" th:text="*{#numbers.formatDecimal(latestPayChaos, 1, 2)}"></div>
                     </div>
                     <div class="text-center "> ---></div>
-                    <div class="flex content-center flex-shrink-0 h-1/2">
+                    <div class="flex content-center flex-shrink-0 h-3/4">
                         <img th:src="*{iconURL}" alt="">
                         <div class="item-body"> 1</div>
                     </div>
@@ -55,34 +73,34 @@
             </td>
             <td class="min-w-20 max-w-40 h-20 grid grid-cols-3 gap-4 items-center">
 
-                    <div class="flex  h-max w-max items-center ">
-                        <!--<img src="images/svg_graph_placeholder.png" alt="" class="object-scale-down"/>-->
-                        <div class="border-2 border-opacity-10 border-gray-200 object-scale-down mr-4">
+                <div class="flex  h-max w-max items-center ">
+                    <!--<img src="images/svg_graph_placeholder.png" alt="" class="object-scale-down"/>-->
+                    <div class="border-2 border-opacity-10 border-gray-200 object-scale-down mr-4">
 
 
-                            <svg viewBox="0 0 200 140" class="chart min-w-16 h-16 object-scale-down">
+                        <svg viewBox="0 0 200 140" class="chart min-w-16 h-16 object-scale-down">
 
-                                <polyline
-                                        fill="none"
-                                        stroke="#8a8a8a"
-                                        stroke-dasharray="10, 10"
-                                        stroke-opacity="0.7"
-                                        stroke-width="1"
-                                        points="0, 70 198 70"
-                                />
-                                <polyline
-                                        fill="none"
-                                        stroke="#0074d9"
-                                        stroke-width="4"
-                                        th:attr="points=*{payPolylineString}"
-                                />
+                            <polyline
+                                    fill="none"
+                                    stroke="#8a8a8a"
+                                    stroke-dasharray="10, 10"
+                                    stroke-opacity="0.7"
+                                    stroke-width="1"
+                                    points="0, 70 198 70"
+                            />
+                            <polyline
+                                    fill="none"
+                                    stroke="#0074d9"
+                                    stroke-width="4"
+                                    th:attr="points=*{payPolylineString}"
+                            />
 
-                            </svg>
+                        </svg>
 
 
-                        </div>
-                        <div class="item-body" th:text="*{payTotalChange}"></div>
                     </div>
+                    <div class="item-body" th:text="*{payTotalChange}"></div>
+                </div>
 
             </td>
             <td class="w-20">Trade</td>
@@ -94,5 +112,39 @@
     </table>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $("#entireSearch").on("keyup", function () {
+            let entireValue = $("#entireSearch").val().toLowerCase();
+
+
+            $("#currency tr").each(function () {
+                let rowText = $(this).text().toLowerCase();
+                // Show all rows if entire search is empty
+                let matchEntire = entireValue === "";
+
+                if (entireValue !== "") {
+                    matchEntire = rowText.indexOf(entireValue) > -1;
+                }
+
+                $(this).toggle(matchEntire);
+            });
+        });
+    });
+
+    const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+    const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+    // do the work...
+    document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        const table = th.closest('table');
+        Array.from(table.querySelectorAll('tr')).slice(1)
+            .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+            .forEach(tr => table.appendChild(tr) );
+    })));
+</script>
 </body>
 </html>
