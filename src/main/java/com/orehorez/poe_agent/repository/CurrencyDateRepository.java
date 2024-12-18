@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -39,5 +40,10 @@ public interface CurrencyDateRepository extends JpaRepository<CurrencyDate, Inte
 
     @Query("SELECT cd.receiveTotalChange FROM CurrencyDate cd WHERE cd.currency.currencyId = :currencyId ORDER BY cd.sampleDate.dateId DESC LIMIT 1")
     Double findLatestReceiveTotalChangeByCurrency(@Param("currencyId") Long currencyId);
+
+    @Query("SELECT CurrencyDate FROM CurrencyDate cd WHERE cd.currency.currencyId = :currencyId ORDER BY cd.sampleDate.dateId DESC ")
+    List<CurrencyDate> findAllByCurrencyId(@Param("currencyId") Long currencyId);
+
+    List<CurrencyDate> findAllByCurrencyCurrencyId(Long id);
 
 }

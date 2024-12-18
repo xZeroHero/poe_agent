@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    <link rel="stylesheet" th:href="css/style.css">-->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+</head>
+<body class="relative bg-slate-900 text-amber-400 bg-no-repeat bg-cover bg-[50%] min-h-[full] overflow-visible"
+      style="background-image: url('/images/background.jpg'); height: 913px">
+<div class="absolute bottom-0 left-0 right-0 top-0  w-full overflow-hidden bg-gradient-to-b from-slate-600  to-slate-900 opacity-90 h-full -z-10"></div>
+
+
+<div class=" absolute top-28 left-96 border-2 border-opacity-10 border-gray-200 object-scale-down mr-4 ">
+
+
+    <svg viewBox="0 0 1000 500" class="chart w-[1000px] h-[500px] object-scale-down">
+
+        <polyline
+                fill="none"
+                stroke="#8a8a8a"
+                stroke-dasharray="10, 10"
+                stroke-opacity="0.7"
+                stroke-width="1"
+                points="0, 250 1000 250"
+        />
+        <polyline
+                fill="none"
+                stroke="#0074d9"
+                stroke-width="4"
+                th:attr="points=*{currencyDate.getPolyline()}"
+        />
+
+    </svg>
+
+</div>
+
+<table class="pt-96">
+    <thead>
+    <tr>
+        <th>Pay Chaos</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each=" double : *{currencyDate.getPayChaosList()}">
+        <td th:text="*{double}"></td>
+    </tr>
+    </tbody>
+</table>
+
+
+
+</body>
+</html>

@@ -10,17 +10,17 @@
     </script>
 
 </head>
-<body class="relative bg-slate-900 text-amber-400 bg-no-repeat bg-cover bg-[50%] "
+<body class="relative bg-slate-900 text-amber-400 bg-no-repeat bg-cover bg-[50%] min-h-[full] overflow-visible"
       style="background-image: url('/images/background.jpg'); height: 913px">
-
 
 <div class="absolute bottom-0 left-0 right-0 top-0  w-full overflow-hidden bg-gradient-to-b from-slate-600  to-slate-900 opacity-90 h-full -z-10"></div>
 
 
 <!--<header class=" container mx-auto py-8">
-    <h1 class="text-4xl font-bold px-4">Welcome to Spring Boot Tailwind</h1>
+<h1 class="text-4xl font-bold px-4">Welcome to Spring Boot Tailwind</h1>
 
 </header>-->
+
 
 <a href="/db_refresh" target="_blank">DB Refresh</a><br>
 <a href="/currencyPrice" target="_blank">CurrencyPrice</a><br>
@@ -39,7 +39,7 @@
 
         <thead class="text-xs uppercase bg-slate-950 opacity-90 h-10">
         <tr>
-            <th class="cursor-pointer " >Icon</th>
+            <th class="cursor-pointer ">Icon</th>
             <th class="cursor-pointer">Name</th>
             <th class="cursor-pointer">Buying price</th>
             <th class="cursor-pointer">Last 7 Days</th>
@@ -49,7 +49,7 @@
         </tr>
         </thead>
         <tbody id="currency">
-        <tr th:each="currencyDTO : ${currencyDTOList}" th:object="${currencyDTO}" class="h-10 hover:bg-slate-950">
+        <tr th:each="currencyDTO : ${currencyDTOList}" th:object="${currencyDTO}" class="h-10 hover:bg-slate-950" th:onclick="'showDetails('+*{id}+')'">
             <td>
                 <div class="flex content-center flex-shrink-0 h-1/2">
                     <img th:src="*{iconURL}" alt="" class="scale-90 pl-2">
@@ -138,13 +138,20 @@
             v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
     )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
 
-    // do the work...
+
     document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
         const table = th.closest('table');
         Array.from(table.querySelectorAll('tr')).slice(1)
             .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
-            .forEach(tr => table.appendChild(tr) );
+            .forEach(tr => table.appendChild(tr));
     })));
+
+    function showDetails(id) {
+        location.href = "details?id="+id;
+    }
+
+
+
 </script>
 </body>
 </html>

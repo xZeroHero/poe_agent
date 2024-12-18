@@ -45,6 +45,24 @@ public class CurrencyDateService {
     }*/
 
 
+    public CurrencyDateDTO createCurrencyDateDTO(Long id){
+        CurrencyDateDTO currencyDateDTO = new CurrencyDateDTO();
+        List<Double> payChaosList = new ArrayList<>();
+        List<CurrencyDate> currencyDateList = new ArrayList<>();
+
+        currencyDateList = currencyDateRepository.findAllByCurrencyCurrencyId(id);
+
+        for(CurrencyDate currencyDate : currencyDateList){
+            payChaosList.add(currencyDate.getPayChaos());
+        }
+        System.out.println("\n\n#################################################\n\n");
+        System.out.println(payChaosList);
+        System.out.println("\n\n#################################################\n\n");
+
+        currencyDateDTO.setPayChaosList(payChaosList);
+
+        return currencyDateDTO;
+    }
 
 
 
